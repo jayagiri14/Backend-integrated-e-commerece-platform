@@ -13,13 +13,13 @@
             <% if (cart.length > 0) { %>
                 <% cart.forEach(element => { %>
                     <div class="flex justify-between items-center mb-4">
-                        <span class="text-lg font-semibold"><%= element.name %></span>
+                        <span class="text-lg font-semibold"> <%= element.product ? element.product.name : "dont know" %></span>
                         <div class="flex items-center">
                             <a class="bg-gray-300 text-gray-700 px-2 py-1 rounded" href="/user/minus/<%=element._id %>">-</button>
-                            <span class="mx-2">01</span>
+                            <span class="mx-2"><%= element.quantity %></span>
                             <a class="bg-gray-300 text-gray-700 px-2 py-1 rounded" href="/user/plus/<%=element._id %>">+</a>
                         </div>
-                        <span class="text-lg font-semibold">₹ <%= element.price %></span>
+                        <span class="text-lg font-semibold">₹  <%= element.product ? element.product.price : "0" %></span>
                     </div>
                 <% }); %>
             <% } else { %>

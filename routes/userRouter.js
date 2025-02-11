@@ -45,35 +45,92 @@ router.get('/', async (req, res) => {
 });
 
 router.get("/cart",isLoggedIn,async (req,res)=>{
-    let user = await User.findOne({email: req.user.email}).populate('cart'); //note here we are populating the cart field this simply means that we first had the ids in the model but now we are getting the whole product object remember that reference id has to be given in the user model under the cart
+    let user = await User.findOne({email: req.user.email}).populate('cart.product'); //note here we are populating the cart field this simply means that we first had the ids in the model but now we are getting the whole product object remember that reference id has to be given in the user model under the cart
     let cart=user.cart
+
+    
     res.render("cart",{cart})
 })
 
 router.get("/cart/:id",isLoggedIn,async (req,res)=>{
-    let id=req.params.id
-    let product=await Product.findById(id)
-    let user=req.user
-    user.cart.push(product._id)
-    await User.findByIdAndUpdate(user._id, { cart: user.cart });
-    res.redirect("/user/userpage")
+
+        let id = req.params.id;
+
+        // let product = await Product.findById(id);
+        let user = await User.findOne({ _id: req.user._id });
+
+        // Check if the product is already in the cart
+        let cartItemIndex = user.cart.findIndex(item =>
+             item.product && item.product._id.toString() === id);
+
+        if (cartItemIndex > -1) {
+            // If it exists, increment the quantity
+            user.cart[cartItemIndex].quantity += 1;
+        } else {
+            // If it doesn't exist, add the product to the cart
+            user.cart.push({ product: id, quantity: 1 });
+        }
+
+        await user.save();
+        res.redirect("/user/cart");
     
 })
 
 
-router.get("/add/:id",isLoggedIn,async (req,res)=>{
-    let user=req.user;
-    let id=req.params.id
-    let product=await Product.findById(id)
+router.get("/plus/:id", isLoggedIn, async (req, res) => {
+    try {
+        let id = req.params.id;//gives the id of the cart element  NOT THE PRODUCT ID
 
-})
-router.get("/plus/:id",isLoggedIn,async (req,res)=>{
-    let user=req.user;
-    let id=req.params.id
-    let product=await Product.findById(id)
-    
+        // let product = await Product.findById(id);
+        let user = await User.findOne({ _id: req.user._id });
 
-})
+        // Check if the product is already in the cart
+        let cartItemIndex = user.cart.findIndex(item =>
+             item.product && item._id.toString() === id);
+
+        if (cartItemIndex > -1) {
+            // Increment quantity if item exists
+            user.cart[cartItemIndex].quantity += 1;
+        } else {
+            // Add new item to cart if it doesn't exist
+            user.cart.push({ product: id, quantity: 1 });
+        }
+
+        await user.save();
+        res.redirect("/user/cart");
+    } catch (error) {
+        console.error("Error increasing quantity:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+router.get("/minus/:id", isLoggedIn, async (req, res) => {
+    try {
+        let user = await User.findOne({ _id: req.user._id });
+        let productId = req.params.id;
+
+        let cartItemIndex = user.cart.findIndex(item => item.product && item.product.toString() === productId);
+
+        if (cartItemIndex > -1) {
+            if (user.cart[cartItemIndex].quantity > 1) {
+                user.cart[cartItemIndex].quantity -= 1;
+            } else {
+                user.cart.splice(cartItemIndex, 1);
+            }
+        }
+
+        await user.save();
+        res.send(`
+            <script>
+                window.location.replace('/user/userpage');
+            </script>
+        `);
+    } catch (error) {
+        console.error("Error decreasing quantity:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 router.post('/register',  async (req, res) => {
 
     try {
