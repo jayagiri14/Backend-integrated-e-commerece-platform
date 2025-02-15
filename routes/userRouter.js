@@ -106,25 +106,27 @@ router.get("/plus/:id", isLoggedIn, async (req, res) => {
 
 router.get("/minus/:id", isLoggedIn, async (req, res) => {
     try {
-        let user = await User.findOne({ _id: req.user._id });
-        let productId = req.params.id;
+        let id = req.params.id;//gives the id of the cart element  NOT THE PRODUCT ID
 
-        let cartItemIndex = user.cart.findIndex(item => item.product && item.product.toString() === productId);
+        // let product = await Product.findById(id);
+        let user = await User.findOne({ _id: req.user._id });
+
+        // Check if the product is already in the cart
+        let cartItemIndex = user.cart.findIndex(item =>
+             item.product && item._id.toString() === id);
 
         if (cartItemIndex > -1) {
-            if (user.cart[cartItemIndex].quantity > 1) {
-                user.cart[cartItemIndex].quantity -= 1;
-            } else {
-                user.cart.splice(cartItemIndex, 1);
+            // Increment quantity if item exists
+            if(user.cart[cartItemIndex].quantity>1){
+            user.cart[cartItemIndex].quantity -= 1;
             }
-        }
+            else{
+                user.cart.splice(cartItemIndex,1)
+            }
+        } 
 
         await user.save();
-        res.send(`
-            <script>
-                window.location.replace('/user/userpage');
-            </script>
-        `);
+        res.redirect("/user/cart");
     } catch (error) {
         console.error("Error decreasing quantity:", error);
         res.status(500).send("Internal Server Error");
