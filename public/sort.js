@@ -7,25 +7,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const sortOrder = this.value;
             const productCards = Array.from(document.querySelectorAll('.product-card'));
 
+            // Extract price values once to avoid repeated DOM access during sorting
+            const productCardsWithPrices = productCards.map(card => {
+                const priceText = card.querySelector('.price').textContent;
+                const price = parseFloat(priceText.replace('₹', '').trim());
+                return { card, price };
+            });
+
+            // Sort the array of objects by price
             if (sortOrder === 'desc') {
-                // Sort descending by price
-                productCards.sort((a, b) => {
-                    let priceA = parseFloat(a.querySelector('.price').textContent.replace('₹', '').trim());
-                    let priceB = parseFloat(b.querySelector('.price').textContent.replace('₹', '').trim());
-                    return (priceB - priceA);
-                });
+                productCardsWithPrices.sort((a, b) => b.price - a.price);
             } else if (sortOrder === 'aesc') {
-                // Sort ascending by price
-                productCards.sort((a, b) => {
-                    let priceA = parseFloat(a.querySelector('.price').textContent.replace('₹', '').trim());
-                    let priceB = parseFloat(b.querySelector('.price').textContent.replace('₹', '').trim());
-                    return priceA -priceB;
-                });
+                productCardsWithPrices.sort((a, b) => a.price - b.price);
             }
 
-            // Clear the product grid and append the sorted product cards
+            // Use DocumentFragment for better performance when updating the DOM
+            const fragment = document.createDocumentFragment();
+            productCardsWithPrices.forEach(item => {
+                fragment.appendChild(item.card);
+            });
+
+            // Clear and update the grid in one operation
             grid.innerHTML = '';
-            productCards.forEach(card => grid.appendChild(card));
+            grid.appendChild(fragment);
         });
     }
 });

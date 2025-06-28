@@ -18,7 +18,6 @@ app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
   res.redirect("/user");
-
 });
 app.use("/owner", ownerRouter);
 app.use("/product", productRouter);

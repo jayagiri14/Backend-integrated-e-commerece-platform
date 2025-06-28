@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scatch Online Store</title>
+    <title> Online Store</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,7 +95,66 @@
         <span>Cart</span>
     </a>
     <div class="sidebar" >
-        <h2>Scatch</h2>
+        <h2>Home Shop        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title> Online Store</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    display: flex;
+                    margin: 0;
+                    padding: 0;
+                    min-height: 100vh; /* Ensure body covers full viewport height */
+                }
+                .cart-icon {
+                    position: absolute;
+                    top: 10px;
+                    right: 20px;
+                    align-items: center;
+                    background-color: #2196f3;
+                    color: #fff;
+                    padding: 10px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+                .cart-icon:hover {
+                    background-color: #1976d2;
+                }
+                .cart-icon img {
+                    width: 24px;
+                    margin-right: 8px;
+                }
+                .sidebar {
+                    width: 200px;
+                    min-height: 100vh; /* Use viewport height instead of percentage */
+                    padding: 20px;
+                    background-color: #f4f4f4;
+                    position: sticky; /* Keep sidebar in place when scrolling */
+                    top: 0;
+                    align-self: flex-start; /* Align to top of flex container */
+                }
+                .sidebar h2 {
+                    margin-top: 0;
+                }
+                .sidebar ul {
+                    list-style-type: none;
+                    padding: 0;
+                }
+                .sidebar ul li {
+                    margin-bottom: 10px;
+                }
+                .main-content {
+                    flex-grow: 1;
+                    padding: 20px;
+                    margin-top: 30px;
+                }
+            </style>
+        </head>
+      </h2>
         <div>
             <label for="sort">Sort by:</label>
             <select id="sort">
